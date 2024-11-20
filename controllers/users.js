@@ -74,4 +74,59 @@ router.post("/users", async (req, res) => {
   }
 });
 
+router.put("/users/:id", async (req, res) => {
+  console.log(req.body);
+  try {
+    const id = req.params.id;
+    console.log(id);
+    const user = await User.findByPk(id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const {
+      username,
+      email,
+      password,
+      first_name,
+      last_name,
+      birth_date,
+      age,
+      height,
+      weight,
+      is_active,
+      bio,
+      profile_picture,
+      address,
+    } = req.body;
+
+    if (!username && !email && !password) {
+      return res
+        .status(400)
+        .json({ message: "Username, email, and password are required" });
+    }
+
+    user.username = username || user.username;
+    user.email = email || user.email;
+    user.password = password || user.password;
+    user.first_name = first_name || user.first_name;
+    user.last_name = last_name || user.last_name;
+    user.birth_date = birth_date || user.birth_date;
+    user.age = age || user.age;
+    user.height = height || user.height;
+    user.weight = weight || user.weight;
+    user.is_active = is_active || user.is_active;
+    user.bio = bio || user.bio;
+    user.profile_picture = profile_picture || user.profile_picture;
+    user.address = address || user.address;
+
+    await user.save();
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 module.exports = router;
